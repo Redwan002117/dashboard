@@ -74,7 +74,7 @@ const MachineCard: React.FC<MachineCardProps> = ({ machine, onClick }) => {
                 {/* Disk */}
                 <div>
                     <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-600 flex items-center gap-1"><HardDrive size={14} /> Disk</span>
+                        <span className="text-gray-600 flex items-center gap-1"><HardDrive size={14} /> Main Disk</span>
                         <span className={`font-medium ${getUsageColor(machine.metrics?.disk || 0)}`}>{machine.metrics?.disk || 0}%</span>
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -90,11 +90,11 @@ const MachineCard: React.FC<MachineCardProps> = ({ machine, onClick }) => {
                     <div className="flex gap-3">
                         <span className="flex items-center gap-1 text-gray-500">
                             <Activity size={12} className="rotate-180 text-blue-500" />
-                            {Math.round((machine.metrics?.network_down_kbps || 0))} KB/s
+                            {(machine.metrics?.network_down_kbps || 0).toFixed(1)} KB/s
                         </span>
                         <span className="flex items-center gap-1 text-gray-500">
                             <Activity size={12} className="text-green-500" />
-                            {Math.round((machine.metrics?.network_up_kbps || 0))} KB/s
+                            {(machine.metrics?.network_up_kbps || 0).toFixed(1)} KB/s
                         </span>
                     </div>
                     {machine.metrics?.active_vpn && (
