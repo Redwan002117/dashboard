@@ -18,6 +18,11 @@ const MachineDetails: React.FC<MachineDetailsProps> = ({ machine, onClose }) => 
     const [isEditing, setIsEditing] = React.useState(false);
     const [nickname, setNickname] = React.useState(machine.nickname || '');
     const [sortConfig, setSortConfig] = React.useState<{ key: string, direction: 'asc' | 'desc' } | null>({ key: 'cpu', direction: 'desc' });
+    const [isVisible, setIsVisible] = React.useState(false);
+
+    React.useEffect(() => {
+        setIsVisible(true);
+    }, []);
 
     // Force update to reflect changes from ProfileCard immediate local state if needed, 
     // though the socket event should handle it.
@@ -64,15 +69,23 @@ const MachineDetails: React.FC<MachineDetailsProps> = ({ machine, onClose }) => 
         }
     };
 
-    const handleUpdateProfile = async (profile: Machine['profile']) => {
+    const handleProfileUpdate = async (newProfile: Machine['profile']) => {
         try {
-            await fetch(`/api/machines/${machine.id}/profile`, {
+            const res = await fetch(`/api/machines/${machine.id}/profile`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ profile })
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-API-Key': 'YOUR_STATIC_API_KEY_HERE'
+                },
+                body: JSON.stringify({ profile: newProfile })
             });
-        } catch (error) {
-            console.error('Failed to update profile:', error);
+            if (!res.ok) throw new Error('Failed to update profile');
+
+            // Optimistic update handled by local state in MachineDetails or reload
+            // But since we pass machine down, we might need to update local machine state? 
+            // Better to rely on the socket update which will refresh the machine list/details
+        } catch (err) {
+            console.error(err);
         }
     };
 
@@ -110,7 +123,7 @@ const MachineDetails: React.FC<MachineDetailsProps> = ({ machine, onClose }) => 
                 {/* Left Empty Space - Profile Card Centered Here */}
                 <div className="hidden xl:flex flex-1 items-center justify-center pointer-events-none">
                     <div className="pointer-events-auto shadow-2xl rounded-3xl">
-                        <ProfileCard machine={machine} onUpdate={handleUpdateProfile} />
+                        <ProfileCard machine={machine} onUpdate={handleProfileUpdate} />
                     </div>
                 </div>
 
@@ -209,7 +222,7 @@ const MachineDetails: React.FC<MachineDetailsProps> = ({ machine, onClose }) => 
 
                                 {/* Machine Profile Card (Mobile/Tablet Only) */}
                                 <div className="xl:hidden">
-                                    <ProfileCard machine={machine} onUpdate={handleUpdateProfile} />
+                                    <ProfileCard machine={machine} onUpdate={handleProfileUpdate} />
                                 </div>
 
                                 {/* System Details */}
@@ -460,6 +473,18 @@ const MachineDetails: React.FC<MachineDetailsProps> = ({ machine, onClose }) => 
                                 </section>
                             </div>
                         </div>
+                    </div>
+                </div>
+                {/* Left Column: Profile Card */}
+                <div className={`
+                    w-full lg:w-[24rem] lg:flex-shrink-0 transition-all duration-700 delay-100 ease-out z-20
+                    ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}
+                `}>
+                    <div className="sticky top-6">
+                        <ProfileCard
+                            machine={machine}
+                            onUpdate={handleProfileUpdate}
+                        />
                     </div>
                 </div>
             </div>

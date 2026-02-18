@@ -36,7 +36,7 @@ const MachineCard: React.FC<MachineCardProps> = ({ machine, onClick }) => {
         <div
             onClick={() => onClick(machine)}
             className={`
-                group relative p-6 rounded-2xl border transition-all duration-500 cursor-pointer overflow-hidden
+                group relative p-5 rounded-2xl border transition-all duration-500 cursor-pointer overflow-hidden
                 ${isOnline
                     ? 'bg-white/80 backdrop-blur-xl border-white/40 shadow-sm hover:shadow-2xl hover:-translate-y-1 hover:border-blue-200/50 ring-1 ring-slate-900/5'
                     : 'bg-slate-50/50 backdrop-blur-sm border-slate-200/60 opacity-60 grayscale-[0.8] hover:opacity-100 hover:grayscale-0'}

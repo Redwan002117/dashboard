@@ -24,6 +24,9 @@ export interface Machine {
         avatar?: string;
         tags?: string[];
         stats?: Array<{ label: string; value: string }>;
+        floor_name?: string;
+        desk_name?: string;
+        pc_number?: string;
     };
 }
 
